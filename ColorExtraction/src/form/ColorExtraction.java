@@ -96,7 +96,7 @@ public class ColorExtraction extends JFrame {
 				}
 			}
 		});
-		
+
 		outImage.addActionListener(e -> {
 			if (m_image == null) {
 				JOptionPane.showMessageDialog(null, "이미지가 없습니다.", "오류", JOptionPane.ERROR_MESSAGE);
@@ -112,7 +112,7 @@ public class ColorExtraction extends JFrame {
 				m_imageChange = ImageCopy(m_image);
 				GetBlue(m_imageChange);
 			}
-			
+
 			im.setIcon(new ImageIcon(m_imageChange));
 			repaint();
 			revalidate();
@@ -128,7 +128,8 @@ public class ColorExtraction extends JFrame {
 			f.setVisible(true);
 			if (f.getFile() != null) {
 				try {
-					ImageIO.write(m_imageChange, "jpg", new File(f.getDirectory().toString()+f.getFile().toString()+".jpg"));
+					ImageIO.write(m_imageChange, "jpg",
+							new File(f.getDirectory().toString() + f.getFile().toString() + ".jpg"));
 				} catch (Exception e2) {
 					// TODO: handle exception
 				}
@@ -136,7 +137,6 @@ public class ColorExtraction extends JFrame {
 		});
 
 		resetImage.addActionListener(e -> {
-			im.setIcon(new ImageIcon(new ImageIcon("").getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
 			im.setIcon(new ImageIcon(m_image));
 			pack();
 			repaint();
@@ -151,39 +151,16 @@ public class ColorExtraction extends JFrame {
 	public void GetRed(BufferedImage image) {
 		int width = image.getWidth();
 		int height = image.getHeight();
-		int maxrgb = 0, r = 0, g = 0, b = 0, rgb = 0;
+		int maxrgb = 0, r = 0, g = 0, b = 0;
 		for (int w = 0; w < width; w++) {
 			for (int h = 0; h < height; h++) {
-				maxrgb = 0;
 				r = new Color(image.getRGB(w, h)).getRed();
 				g = new Color(image.getRGB(w, h)).getGreen();
 				b = new Color(image.getRGB(w, h)).getBlue();
 
-				if (maxrgb < r)
-					maxrgb = r;
-				if (maxrgb < g)
-					maxrgb = g;
-				if (maxrgb < b)
-					maxrgb = b;
-				// 가장 큰 RGB
-				
-				if (maxrgb < 200 && maxrgb > 190 && r < 70) // 파랑+초록
-					image.setRGB(w, h, Color.white.getRGB());
+				maxrgb = MaxRGB(r, g, b);// 가장 큰 RGB
 
-				if (maxrgb < 160 && r < 40) // 파랑+초록
-					image.setRGB(w, h, Color.white.getRGB());
-
-				if (r == 255)
-					image.setRGB(w, h, ReturnRGB(Color.red));
-				if (g == 255)
-					image.setRGB(w, h, Color.white.getRGB());
-				if (b == 255)
-					image.setRGB(w, h, Color.white.getRGB());
-
-				rgb = new Color(image.getRGB(w, h)).getRGB();
-				if (rgb <= new Color(200, 200, 200).getRGB()) {
-					image.setRGB(w, h, ReturnRGB(Color.red));
-				}
+				image = ColorEx(image, maxrgb, w, h, r, g, b, Color.red); // col1 = 추출 색
 			}
 		}
 		m_imageChange = image;
@@ -192,38 +169,16 @@ public class ColorExtraction extends JFrame {
 	public void GetGreen(BufferedImage image) {
 		int width = image.getWidth();
 		int height = image.getHeight();
-		int maxrgb = 0, r = 0, g = 0, b = 0, rgb = 0;
+		int maxrgb = 0, r = 0, g = 0, b = 0;
 		for (int w = 0; w < width; w++) {
 			for (int h = 0; h < height; h++) {
-				maxrgb = 0;
 				r = new Color(image.getRGB(w, h)).getRed();
 				g = new Color(image.getRGB(w, h)).getGreen();
 				b = new Color(image.getRGB(w, h)).getBlue();
 
-				if (maxrgb < r)
-					maxrgb = r;
-				if (maxrgb < g)
-					maxrgb = g;
-				if (maxrgb < b)
-					maxrgb = b;
+				maxrgb = MaxRGB(r, g, b);
 
-				if (maxrgb < 200 && maxrgb > 190 && g < 70)
-					image.setRGB(w, h, Color.white.getRGB());
-
-				if (maxrgb < 160 && g < 40)
-					image.setRGB(w, h, Color.white.getRGB());
-
-				if (g == 255)
-					image.setRGB(w, h, ReturnRGB(Color.green));
-				if (r == 255)
-					image.setRGB(w, h, Color.white.getRGB());
-				if (b == 255)
-					image.setRGB(w, h, Color.white.getRGB());
-
-				rgb = new Color(image.getRGB(w, h)).getRGB();
-				if (rgb <= new Color(200, 200, 200).getRGB()) {
-					image.setRGB(w, h, ReturnRGB(Color.green));
-				}
+				image = ColorEx(image, maxrgb, w, h, g, r, b, Color.green); // col1 = 추출 색
 			}
 		}
 		m_imageChange = image;
@@ -232,52 +187,64 @@ public class ColorExtraction extends JFrame {
 	public void GetBlue(BufferedImage image) {
 		int width = image.getWidth();
 		int height = image.getHeight();
-		int maxrgb = 0, r = 0, g = 0, b = 0, rgb = 0;
+		int maxrgb = 0, r = 0, g = 0, b = 0;
 		for (int w = 0; w < width; w++) {
 			for (int h = 0; h < height; h++) {
-				maxrgb = 0;
 				r = new Color(image.getRGB(w, h)).getRed();
 				g = new Color(image.getRGB(w, h)).getGreen();
 				b = new Color(image.getRGB(w, h)).getBlue();
 
-				if (maxrgb < r)
-					maxrgb = r;
-				if (maxrgb < g)
-					maxrgb = g;
-				if (maxrgb < b)
-					maxrgb = b;
+				maxrgb = MaxRGB(r, g, b);
 
-				if (maxrgb < 200 && maxrgb > 190 && b < 70)
-					image.setRGB(w, h, Color.white.getRGB());
-
-				if (maxrgb < 160 && b < 40)
-					image.setRGB(w, h, Color.white.getRGB());
-
-				if (b == 255)
-					image.setRGB(w, h, ReturnRGB(Color.blue));
-				if (r == 255)
-					image.setRGB(w, h, Color.white.getRGB());
-				if (g == 255)
-					image.setRGB(w, h, Color.white.getRGB());
-
-				rgb = new Color(image.getRGB(w, h)).getRGB();
-				if (rgb <= new Color(200, 200, 200).getRGB()) {
-					image.setRGB(w, h, ReturnRGB(Color.blue));
-				}
+				image = ColorEx(image, maxrgb, w, h, b, r, g, Color.blue);
 			}
 		}
 		m_imageChange = image;
 	}
-	
-	int ReturnRGB(Color col) { //RGB 값 리턴
-		if (colorOption_Black.isSelected()) {
-			return Color.black.getRGB();
-		} else {
-			return col.getRGB();
-		}
+
+	int MaxRGB(int r, int g, int b) { // 가장 큰 R G B
+		int maxrgb = 0;
+		if (maxrgb < r)
+			maxrgb = r;
+		if (maxrgb < g)
+			maxrgb = g;
+		if (maxrgb < b)
+			maxrgb = b;
+		return maxrgb;
 	}
 
-	static BufferedImage ImageCopy(BufferedImage bi) {
+	BufferedImage ColorEx(BufferedImage image, int maxrgb, int w, int h, int col1, int col2, int col3, Color ch) {
+		// 색깔 추출
+		if (maxrgb < 200 && maxrgb > 190 && col1 < 70)
+			image.setRGB(w, h, Color.white.getRGB());
+
+		if (maxrgb < 160 && col1 < 40)
+			image.setRGB(w, h, Color.white.getRGB());
+
+		if (col1 == 255)
+			image.setRGB(w, h, ReturnRGB(ch));
+		if (col2 == 255)
+			image.setRGB(w, h, Color.white.getRGB());
+		if (col3 == 255)
+			image.setRGB(w, h, Color.white.getRGB());
+
+		int rgb = new Color(image.getRGB(w, h)).getRGB();
+
+		if (rgb <= new Color(200, 200, 200).getRGB())
+			image.setRGB(w, h, ReturnRGB(ch));
+
+		return image;
+	}
+
+	int ReturnRGB(Color col) { // RGB 값 리턴
+		if (colorOption_Black.isSelected())
+			return Color.black.getRGB();
+		else
+			return col.getRGB();
+
+	}
+
+	static BufferedImage ImageCopy(BufferedImage bi) { // 얕은 복사
 		ColorModel cm = bi.getColorModel();
 		boolean alp = cm.isAlphaPremultiplied();
 		WritableRaster wr = bi.copyData(null);
