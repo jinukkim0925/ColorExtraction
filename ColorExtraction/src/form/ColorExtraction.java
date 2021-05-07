@@ -151,16 +151,14 @@ public class ColorExtraction extends JFrame {
 	public void GetRed(BufferedImage image) {
 		int width = image.getWidth();
 		int height = image.getHeight();
-		int maxrgb = 0, r = 0, g = 0, b = 0;
+		int r = 0, g = 0, b = 0;
 		for (int w = 0; w < width; w++) {
 			for (int h = 0; h < height; h++) {
 				r = new Color(image.getRGB(w, h)).getRed();
 				g = new Color(image.getRGB(w, h)).getGreen();
 				b = new Color(image.getRGB(w, h)).getBlue();
 
-				maxrgb = MaxRGB(r, g, b);// 가장 큰 RGB
-
-				image = ColorEx(image, maxrgb, w, h, r, g, b, Color.red); // col1 = 추출 색
+				image = ColorEx(image, w, h, r, g, b, Color.red); // col1 = 추출 색
 			}
 		}
 		m_imageChange = image;
@@ -169,16 +167,14 @@ public class ColorExtraction extends JFrame {
 	public void GetGreen(BufferedImage image) {
 		int width = image.getWidth();
 		int height = image.getHeight();
-		int maxrgb = 0, r = 0, g = 0, b = 0;
+		int r = 0, g = 0, b = 0;
 		for (int w = 0; w < width; w++) {
 			for (int h = 0; h < height; h++) {
 				r = new Color(image.getRGB(w, h)).getRed();
 				g = new Color(image.getRGB(w, h)).getGreen();
 				b = new Color(image.getRGB(w, h)).getBlue();
 
-				maxrgb = MaxRGB(r, g, b);
-
-				image = ColorEx(image, maxrgb, w, h, g, r, b, Color.green); // col1 = 추출 색
+				image = ColorEx(image, w, h, g, r, b, Color.green); // col1 = 추출 색
 			}
 		}
 		m_imageChange = image;
@@ -187,51 +183,47 @@ public class ColorExtraction extends JFrame {
 	public void GetBlue(BufferedImage image) {
 		int width = image.getWidth();
 		int height = image.getHeight();
-		int maxrgb = 0, r = 0, g = 0, b = 0;
+		int r = 0, g = 0, b = 0;
 		for (int w = 0; w < width; w++) {
 			for (int h = 0; h < height; h++) {
 				r = new Color(image.getRGB(w, h)).getRed();
 				g = new Color(image.getRGB(w, h)).getGreen();
 				b = new Color(image.getRGB(w, h)).getBlue();
 
-				maxrgb = MaxRGB(r, g, b);
-
-				image = ColorEx(image, maxrgb, w, h, b, r, g, Color.blue);
+				image = ColorEx(image, w, h, b, r, g, Color.blue);
 			}
 		}
 		m_imageChange = image;
 	}
 
-	int MaxRGB(int r, int g, int b) { // 가장 큰 R G B
-		int maxrgb = 0;
-		if (maxrgb < r)
-			maxrgb = r;
-		if (maxrgb < g)
-			maxrgb = g;
-		if (maxrgb < b)
-			maxrgb = b;
-		return maxrgb;
-	}
-
-	BufferedImage ColorEx(BufferedImage image, int maxrgb, int w, int h, int col1, int col2, int col3, Color ch) {
+	BufferedImage ColorEx(BufferedImage image, int x, int y, int col1, int col2, int col3, Color ch) {
 		// 색깔 추출
+		int maxrgb = 0;
+
+		if (maxrgb < col1)
+			maxrgb = col1;
+		if (maxrgb < col2)
+			maxrgb = col2;
+		if (maxrgb < col3)
+			maxrgb = col3;
+
 		if (maxrgb < 200 && maxrgb > 190 && col1 < 70)
-			image.setRGB(w, h, Color.white.getRGB());
+			image.setRGB(x, y, Color.white.getRGB());
 
 		if (maxrgb < 160 && col1 < 40)
-			image.setRGB(w, h, Color.white.getRGB());
+			image.setRGB(x, y, Color.white.getRGB());
 
 		if (col1 == 255)
-			image.setRGB(w, h, ReturnRGB(ch));
+			image.setRGB(x, y, ReturnRGB(ch));
 		if (col2 == 255)
-			image.setRGB(w, h, Color.white.getRGB());
+			image.setRGB(x, y, Color.white.getRGB());
 		if (col3 == 255)
-			image.setRGB(w, h, Color.white.getRGB());
+			image.setRGB(x, y, Color.white.getRGB());
 
-		int rgb = new Color(image.getRGB(w, h)).getRGB();
+		int rgb = new Color(image.getRGB(x, y)).getRGB();
 
 		if (rgb <= new Color(200, 200, 200).getRGB())
-			image.setRGB(w, h, ReturnRGB(ch));
+			image.setRGB(x, y, ReturnRGB(ch));
 
 		return image;
 	}
